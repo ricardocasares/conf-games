@@ -22,7 +22,7 @@ const Center = ({ children }) => {
 
 export default class extends Component {
   state = {
-    text: "Connection..."
+    text: "Connecting..."
   };
 
   static async getInitialProps({ query }) {

@@ -4,22 +4,6 @@ import { Component } from "react";
 
 import Container from "../../components/Container";
 
-const Center = ({ children }) => {
-  const style = {
-    flex: "0 auto",
-    alignSelf: "center",
-    justifyContent: "center",
-    color: "white",
-    width: "100%",
-    display: "flex",
-    textShadow: "1px 1px 1px black",
-    fontWeight: "500",
-    fontSize: "28px"
-  };
-
-  return <div style={style}>{children}</div>;
-};
-
 export default class extends Component {
   state = {
     text: "Connecting..."
@@ -41,14 +25,12 @@ export default class extends Component {
     });
 
     this.moves = new Listener({
-      delta: 15,
-      action: (delta, angle) => {
-        this.socket.emit(angle, { delta });
-      }
+      delta: 5,
+      action: this.onMotion.bind(this)
     });
 
     this.socket.on("connect", () => {
-      this.setState({ text: "Shake me!" });
+      this.setState({ text: "Get some stars!" });
     });
 
     this.socket.on("color", ({ color }) => {
@@ -56,8 +38,9 @@ export default class extends Component {
     });
   }
 
-  onShake() {
-    this.socket.emit("shake", { id: this.socket.id });
+  onMotion(delta, angle) {
+    console.log(delta, angle);
+    this.socket.emit("motion", { id: this.socket.id, delta, angle });
   }
 
   componentWillUnmount() {
@@ -68,7 +51,7 @@ export default class extends Component {
     const { text } = this.state;
 
     return (
-      <Container>
+      <Container style={{ flexDirection: "column" }}>
         <Center>
           <h1>{text}</h1>
         </Center>
@@ -76,3 +59,19 @@ export default class extends Component {
     );
   }
 }
+
+const Center = ({ children }) => {
+  const style = {
+    flex: "0 auto",
+    alignSelf: "center",
+    justifyContent: "center",
+    color: "white",
+    width: "100%",
+    display: "flex",
+    textShadow: "1px 1px 1px black",
+    fontWeight: "500",
+    fontSize: "28px"
+  };
+
+  return <div style={style}>{children}</div>;
+};

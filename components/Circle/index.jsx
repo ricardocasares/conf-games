@@ -2,9 +2,15 @@ export const DIAMETER = 100;
 
 const Circle = ({ color = "red", x = 0, y = 0 }) => {
   const lane = {
-    width: `${DIAMETER}px`,
+    width: "100%",
     height: "100vh",
-    padding: "20px"
+    flex: "1 auto",
+    display: "flex",
+    justifyContent: "center",
+    paddingTop: "20px",
+    borderLeft: "2px solid #FFF",
+    borderRight: "2px solid #FFF",
+    borderBottom: "30px solid #FFF"
   };
 
   const circle = {

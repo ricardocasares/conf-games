@@ -16,6 +16,12 @@ export default class extends Document {
           />
           <style global jsx>
             {`
+              *,
+              *::after,
+              *::before {
+                box-sizing: border-box;
+              }
+
               html,
               body,
               #__next {

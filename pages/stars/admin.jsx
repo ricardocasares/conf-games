@@ -1,8 +1,18 @@
 import io from "socket.io-client";
 import { Component } from "react";
 
+import Shit from "../../components/Shit";
+import Star from "../../components/Star";
 import Container from "../../components/Container";
-import Circle, { DIAMETER } from "../../components/Circle";
+import Ship, { DIAMETER } from "../../components/Ship";
+
+function id() {
+  return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+}
+
+function random(min = 0, max = 100) {
+  return Math.floor(Math.random() * max) + min;
+}
 
 export default class extends Component {
   static async getInitialProps({ query }) {
@@ -12,10 +22,14 @@ export default class extends Component {
   }
 
   state = {
+    shits: [],
+    stars: [],
     players: {}
   };
 
   componentDidMount() {
+    const width = window.innerWidth - 500;
+    const height = window.innerHeight;
     const { room } = this.props;
 
     this.socket = io({
@@ -24,7 +38,25 @@ export default class extends Component {
 
     this.socket.on("join", this.onJoin.bind(this));
     this.socket.on("leave", this.onLeave.bind(this));
-    this.socket.on("shake", this.onShake.bind(this));
+    this.socket.on("motion", this.onMotion.bind(this));
+
+    this.setState(({ players, shits, stars }) => ({
+      players,
+      stars: Array(5)
+        .fill(0)
+        .map(() => ({
+          id: id(),
+          x: random(200, width),
+          y: random(100, height)
+        })),
+      shits: Array(5)
+        .fill(0)
+        .map(() => ({
+          id: id(),
+          x: random(200, width),
+          y: random(100, height)
+        }))
+    }));
   }
 
   componentWillUnmount() {
@@ -53,16 +85,21 @@ export default class extends Component {
     });
   }
 
-  onShake({ id }) {
+  onMotion({ id, delta, angle }) {
+    console.log(angle, delta);
     this.setState(state => {
       if (!state.players[id]) return state;
+
+      const x = angle === "beta" ? delta * -1 : 0;
+      const y = angle === "gamma" ? delta : 0;
 
       return {
         players: {
           ...state.players,
           [id]: {
             ...state.players[id],
-            y: state.players[id].y + DIAMETER
+            x: state.players[id].x + x,
+            y: state.players[id].y + y
           }
         }
       };
@@ -70,18 +107,20 @@ export default class extends Component {
   }
 
   render() {
-    const { players } = this.state;
+    const { stars, shits, players } = this.state;
 
     return (
       <Container>
         {Object.keys(players).map(id => (
-          <Circle
+          <Ship
             key={id}
             color={players[id].color}
             x={players[id].x}
             y={players[id].y}
           />
         ))}
+        {shits.map(({ id, x, y }) => <Shit size={100} x={x} y={y} key={id} />)}
+        {stars.map(({ id, x, y }) => <Star size={100} x={x} y={y} key={id} />)}
       </Container>
     );
   }

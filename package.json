@@ -9,6 +9,7 @@
     "randomcolor": "^0.5.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "recompose": "^0.27.1",
     "socket.io": "^1.7.3",
     "socket.io-client": "^1.7.3"
   },

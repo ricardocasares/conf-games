@@ -24,8 +24,12 @@ io.on("connection", socket => {
     socket.leave(room).broadcast.emit("leave", { id: socket.id });
   });
 
-  socket.on("shake", ({ id }) => {
-    socket.broadcast.emit("shake", { id });
+  socket.on("shake", data => {
+    socket.broadcast.emit("shake", { ...data });
+  });
+
+  socket.on("motion", data => {
+    socket.broadcast.emit("motion", { ...data });
   });
 });
 
